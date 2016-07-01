@@ -30,7 +30,17 @@ Task("fix-submodules")
 .Description("Updates all sub project submodules to point at master")
 .Does(() =>
 {
-  
+  SUB_PROJECTS.Skip(1).ForEach(project => {
+           LogInfo("Updating "+ project +" from remote");
+           ChangePath(GetProjectDirectory(project));
+           StartProcess("git", new ProcessSettings {
+           Arguments = string.Format("submodule update")
+         });
+         ChangePath("dependencies/nancy");
+         StartProcess("!git", new ProcessSettings {
+           Arguments = string.Format("checkout master && git add . && git commit -m \"Updated submodule\"")
+         });
+         ChangePath("..");
 });
 
 Task("Get-Projects")
@@ -122,6 +132,12 @@ public void UpdateProjectJsonVersion(string version, FilePathCollection filePath
   }
 }
 
+public void ChangePath(string path)
+{
+  StartProcess("cmd", new ProcessSettings {
+     Arguments = string.Format("cd {0}", path)
+   });
+}
 public void LogInfo(string message)
 {
   Information(logAction=>logAction(message));
