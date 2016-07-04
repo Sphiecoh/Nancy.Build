@@ -116,6 +116,7 @@ Task("Prepare-Release")
    // Update version.
    UpdateProjectJsonVersion(version, projectJsonFiles);
  
+ if (!debug){
    // Add
    foreach (var file in projectJsonFiles) 
    {
@@ -132,6 +133,7 @@ Task("Prepare-Release")
    StartProcess("git", new ProcessSettings {
      Arguments = string.Format("tag \"v{0}\"", version)
    });
+ }
  });
 
 Task("Prepare-Release-Nancy")
